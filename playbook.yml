@@ -18,10 +18,10 @@
       timezone:
         name: Pacific/Auckland
 
-    - name: Clean-up of ssh keys for new host
-      command: "cp /dev/null /home/awx/.ssh/known_hosts"
-      become_user: awx
-      when: "'ansible-host' in inventory_hostname"  
+#    - name: Clean-up of ssh keys for new host
+#      command: "cp /dev/null /home/awx/.ssh/known_hosts"
+#      become_user: root
+#      when: "'ansible-host' in inventory_hostname"  
 
     - name: install ansible
       yum:
