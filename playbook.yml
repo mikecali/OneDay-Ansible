@@ -1,0 +1,118 @@
+---
+- hosts: all
+  become: yes
+#  become_user: root
+  gather_facts: true
+ 
+  vars: 
+    ansible_tower_version: ansible-tower-setup-bundle-3.2.1-1.el7 
+    repository:  https://github.com/mikecali/demo_app.git
+
+  tasks:
+    - name: add epel repository
+      yum:
+         name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+         state: present
+
+    - name: configure timezone
+      timezone:
+        name: Pacific/Auckland
+
+    - name: Clean-up of ssh keys for new host
+      command: "cp /dev/null /home/awx/.ssh/known_hosts"
+      become_user: awx
+      when: "'ansible-host' in inventory_hostname"  
+
+    - name: install ansible
+      yum:
+        name: ansible
+        state: latest
+      when: "'ansible-host' in inventory_hostname"
+
+#    - name: Install http
+#      yum: name={{ item }} state=present
+#      with_items:
+#         - httpd
+#         - git
+#         - php
+#      become: true
+#      when: "'web' in inventory_hostname"
+
+#    - name: http service state
+#      service: name=httpd state=started enabled=yes
+#      become: true
+#      when: "'web' in inventory_hostname"
+    
+#    - name: enabled mod_rewrite
+#      apache2_module: name=rewrite state=present
+#      notify:
+#        - restart apache2
+#      when: "'web' in inventory_hostname"
+
+#    - name: Start firewalld
+#      service:
+#        state: restarted
+#        name: firewalld
+#      when: "'web' in inventory_hostname or 'ansible-host' in inventory_hostname"
+#      become_user: root
+
+#    - name: Allow apache 
+#      firewalld:
+#        service: http
+#        permanent: true
+#        state: enabled
+#        zone: public
+#      when: "'web' in inventory_hostname"
+#      become_user: root
+
+#    - name: Install and start Cockpit
+#      yum:
+#        name: cockpit
+#        state: latest
+#      become_user: root
+
+#    - name: Start Cockpit
+#      service: 
+#        state: started
+#        name: cockpit
+#      become_user: root
+
+    - name: Allow SSH connection 
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        insertafter: '#PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+      become: yes
+
+    - name: Allow root login 
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        insertafter: '#PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      become: yes
+
+    - name: Restart sshd
+      service: 
+        state: restarted
+        name: sshd
+
+#    - name: Allow cockpit on firewalld
+#      firewalld:
+#         service: cockpit
+#         permanent: true
+#         state: enabled
+#         zone: public
+#      notify:
+#        - restart firewalld
+#      become_user: root
+
+  
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+      when: "'web' in inventory_hostname"
+
+    - name: restart firewalld
+      service: name=firewalld state=restarted

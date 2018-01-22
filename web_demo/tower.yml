@@ -1,0 +1,107 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  gather_facts: true
+ 
+  vars: 
+    ansible_tower_version: ansible-tower-setup-bundle-3.2.1-1.el7 
+
+  tasks:
+    - name: install wget on ansible-host only
+      yum:
+        name: wget
+        state: latest
+      when: "'ansible' in inventory_hostname"
+
+    - name: verify if installer is already downloaded
+      stat: 
+         path: /home/vagrant/ansible-tower-setup-bundle-latest.el7.tar.gz
+      when: "'ansible-host' in inventory_hostname"    
+      register: t
+
+    - name: Get the Tower Installer
+#      get_url:
+#          url: https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el7.tar.gz
+#          dest: /home/vagrant/
+#          mode: 0755
+      shell: wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el7.tar.gz
+      when: "'ansible' in inventory_hostname and t.stat.exists == False"
+      ignore_errors: yes
+      become_user: vagrant
+
+    - name: verify if installer is untar
+      stat: 
+         path: /home/vagrant/ansible-tower-setup-bundle-3.2.1-1.el7/setup.sh
+      register: p
+      when: "'ansible' in inventory_hostname"
+
+    - name: untar tower Installer
+      shell: tar -xvf /home/vagrant/ansible-tower-setup-bundle-latest.el7.tar.gz
+      when: "'ansible' in inventory_hostname and p.stat.exists == False"
+      ignore_errors: yes
+    
+    - name: Copy vagrant key
+      copy:
+        src: /tmp/vagrant
+        dest: /home/vagrant/.ssh/vagrant
+        owner: vagrant
+        group: vagrant
+        mode: 0600
+      when: "'ansible-host' in inventory_hostname"
+
+    - name: Copy inventory file
+      copy:
+        src: tower/inventory
+        dest: /home/vagrant/ansible-tower-setup-bundle-3.2.1-1.el7/
+        owner: vagrant
+        group: vagrant
+        mode: 0600
+      when: "'ansible-host' in inventory_hostname"
+   
+    - name: Create tower group
+      group:
+        name: awx
+        state: present
+      when: "'ansible-host' in inventory_hostname"
+
+    - name: Create tower User 
+      user:
+        name: awx
+        group: awx
+      when: "'ansible-host' in inventory_hostname"
+
+    - name: add directory needed by tower
+      file:
+         path: /var/log/tower
+         state: directory
+         owner: awx
+         group: awx
+         mode: 0755
+      when: "'ansible-host' in inventory_hostname" 
+
+    - name: disable host key checking on all nodes
+      shell: sed -i '/host_key_checking/a host_key_checking = False' /etc/ansible/ansible.cfg
+      become_user: root
+      when: "'ansible-host' in inventory_hostname"
+      ignore_errors: yes
+
+    - name: verify if Tower is already installed
+      command: ansible-tower-service status
+      register: tower_status
+      when: "'ansible-host' in inventory_hostname"
+      ignore_errors:  yes
+
+    - name: Try to start the installed Tower
+      command: ansible-tower-service start
+      become_user: root
+      register: tower_restart
+      when: "'ansible-host' in inventory_hostname and tower_status |failed"
+      ignore_errors: yes
+
+    - name: Install Tower
+      command: /home/vagrant/ansible-tower-setup-bundle-3.2.1-1.el7/setup.sh
+      when: "'ansible-host' in inventory_hostname"
+      become_user: root
+      ignore_errors: yes
+      when: tower_status | failed or tower_restart | failed
