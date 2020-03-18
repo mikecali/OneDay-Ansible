@@ -1,0 +1,21 @@
+---
+- name: OS | DNS | Stop if we dont have the required variables 
+  fail:
+    msg: Computer says no. This role needs 'dns_servers' and 'dns_search' vars to be set.
+  when: >
+      ( dns_servers is undefined )
+      or ( dns_search is undefined )
+  tags:
+  - os
+  - dns
+
+- name: OS | DNS | Copy over resolv.conf 
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+  - os
+  - dns

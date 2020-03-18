@@ -1,0 +1,11 @@
+---
+
+- name: OS | security | Update the sudoers file 
+  template: 
+    src: sudoers.j2
+    dest: /etc/sudoers
+    validate: 'visudo -cf %s'
+  tags:
+  - os
+  - sudoers
+  - security

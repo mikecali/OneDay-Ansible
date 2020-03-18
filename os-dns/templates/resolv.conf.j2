@@ -1,0 +1,6 @@
+# resolv.conf: Managed by Ansible.
+
+search {{ dns_search }}
+{% for value in dns_servers -%}
+nameserver {{ value }}
+{% endfor %}

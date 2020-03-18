@@ -1,0 +1,12 @@
+---
+
+- name: OS | nmon | Install nmon
+  copy:
+    src: nmon
+    dest: /usr/bin/nmon
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+  - os
+  - nmon

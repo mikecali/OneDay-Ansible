@@ -1,0 +1,25 @@
+---
+
+- name: OS | motd | Create the directroy structure /usr/local/bin if it does not exist
+  file: path=/usr/local/bin state=directory mode=0775
+  tags:
+  - os
+  - motd
+
+- name: OS | motd Copy over motd_update.sh
+  copy:
+    src=motd_update.sh
+    dest=/usr/local/bin/motd_update.sh
+    owner=root
+    group=root
+    mode=0700
+  tags:
+  - os
+  - motd
+
+- name: OS | motd | Update the Message of the Day 
+  command: "/usr/local/bin/motd_update.sh"
+  changed_when: false
+  tags:
+  - os
+  - motd

@@ -1,0 +1,20 @@
+---
+- name: OS | local users | Create Local Users
+  user:
+    name: "{{ item.value.user_name }}"
+    group: wheel
+    home: "/home/{{ item.value.user_name }}"
+    comment: "{{ item.value.user_comment }}"
+  with_dict: "{{ local_users }}"
+  tags:
+  - os
+  - local_users
+
+- name: OS | local users | Insert the SSH key for tholloway
+  authorized_key:
+    user: tholloway
+    state: present
+    key: "{{ lookup('file', 'tholloway.pub') }}"
+  tags:
+  - os
+  - local_users

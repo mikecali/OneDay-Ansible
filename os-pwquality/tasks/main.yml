@@ -1,0 +1,13 @@
+---
+
+- name: OS | security | Push out or pwquality.conf
+  template: 
+    src: pwquality.conf.j2
+    dest: /etc/security/pwquality.conf
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+  - os
+  - pwquality
+  - security

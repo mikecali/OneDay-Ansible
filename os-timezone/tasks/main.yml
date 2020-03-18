@@ -1,0 +1,10 @@
+---
+- name: OS | timezone | Set the timezone to Melbourne
+  file:
+    state: link
+    force: yes
+    src: /usr/share/zoneinfo/Australia/Melbourne
+    dest: /etc/localtime
+  tags:
+  - os
+  - timezone

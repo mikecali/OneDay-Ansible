@@ -1,0 +1,57 @@
+---
+- name: OS | audit | Install Audit Package
+  yum:
+    name: audit
+    state: installed
+  notify: enable auditd
+  tags:
+  - os
+  - audit
+
+- name: OS | audit | install auditd template
+  template:
+    src: auditd.conf.j2
+    dest: /etc/audit/auditd.conf
+    owner: root
+    group: root
+    mode: 0640
+  tags:
+  - os
+  - audit
+
+- name: OS | audit | create /etc/audit/rules.d/
+  file:
+    path: /etc/audit/rules.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0640
+  tags:
+  - os
+  - audit
+
+- name: OS | audit | copy over our rules
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/audit/rules.d/{{ item }}"
+  with_items:
+  - 01_audit_config.rules
+  - 02_date_time.rules
+  - 03_user_group.rules
+  - 04_network.rules
+  - 05_password_policy.rules
+  - 06_mac.rules
+  - 07_login_logout.rules
+  - 08_session.rules
+  - 09_dac.rules
+  - 10_file_access.rules
+  - 11_mount.rules
+  - 12_file_deletion.rules
+  - 13_sudoers.rules
+  - 14_sudo_actions.rules
+  - 15_kernel_modules.rules
+  - 99_audit_config_immutable.rules
+  tags:
+  - os
+  - audit
+

@@ -1,0 +1,35 @@
+## Controlled by Ansible
+AddressFamily any
+Port 22
+ListenAddress 0.0.0.0
+DenyUsers none
+AllowUsers *
+DenyGroups none
+AllowGroups *
+
+Protocol 2
+SyslogFacility AUTHPRIV
+LogLevel INFO
+PermitRootLogin yes 
+MaxAuthTries 4
+HostbasedAuthentication no
+IgnoreRhosts yes
+PasswordAuthentication yes
+PermitEmptyPasswords no
+ChallengeResponseAuthentication yes
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials yes
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+UsePAM yes
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv XMODIFIERS
+X11Forwarding no
+AllowTcpForwarding no
+PermitTunnel no
+PermitUserEnvironment no
+ClientAliveInterval 28800
+ClientAliveCountMax 0
+Banner /etc/issue.net
+Subsystem	sftp	/usr/libexec/openssh/sftp-server

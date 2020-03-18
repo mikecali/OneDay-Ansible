@@ -1,0 +1,3 @@
+# sudoers modification
+-w /etc/sudoers -p wa -k scope
+

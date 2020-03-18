@@ -1,0 +1,9 @@
+---
+
+- name: OS | hostname | Set the hostname to what ansible believes it should be
+  hostname:
+    name: "{{ inventory_hostname }}"
+  when: inventory_hostname != ansible_fqdn
+  tags:
+  - os
+  - hostname

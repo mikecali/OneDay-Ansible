@@ -1,0 +1,20 @@
+---
+
+- name: OS | logrotate | Install Logrotate
+  yum: 
+    name: logrotate 
+    state: installed
+  tags:
+  - os
+  - logrotate
+
+- name: OS | logrotate | install logrotate config
+  template: 
+    src: logrotate.conf.j2
+    dest: /etc/logrotate.conf
+    owner: root 
+    group: root 
+    mode: 0644
+  tags:
+  - os
+  - logrotate

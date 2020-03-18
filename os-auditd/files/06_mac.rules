@@ -1,0 +1,3 @@
+# MAC modification
+-w /etc/selinux/ -p wa -k MAC-policy
+

@@ -1,0 +1,44 @@
+---
+
+- name: OS | packages | Enable EPEL Repository
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  when:
+   - ansible_distribution == 'CentOS'
+  tags:
+  - os
+  - packages
+
+- name: OS | packages | Install Base Packages
+  yum: name={{ item }} state=present
+  with_items:
+   - lvm2
+   - ntp
+   - vim
+   - at
+   - ksh
+   - wget
+   - git
+   - python2-boto
+   - python-pip
+   - zip
+   - unzip
+  when:
+   - ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  tags:
+  - os
+  - packages
+
+- name: OS | packages | Install boto3 via pip
+  pip: name={{ item }}
+  with_items:
+  - boto3
+  - pexpect
+  - dnspython
+  when:
+   - ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  tags:
+  - os
+  - packages
+

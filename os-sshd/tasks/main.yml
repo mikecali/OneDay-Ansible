@@ -1,0 +1,26 @@
+---
+
+- name: OS | security | Copy over /etc/issue.net
+  copy:
+    src: issue.net
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+  - os
+  - security
+  - ssh
+
+- name: OS | security | Copy over /etc/ssh/sshd_config
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 600
+  notify: restart sshd
+  tags:
+  - os
+  - security
+  - ssh
