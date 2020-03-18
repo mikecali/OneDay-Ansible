@@ -1,0 +1,20 @@
+---
+- name: Installs ansible jenkins plugin 
+  hosts: all 
+  gather_facts: no
+  become: true
+  tasks:
+
+  - name: Install Ansible plugin 
+    jenkins_plugin:
+      name: Ansible 
+      url_username: "{{ jenkins_username }}"
+      url_password: "{{ jenkins_password }}"
+      url: "{{ jenkins_url }}" 
+    register: plugin_install
+
+  - name: Restart Jenkins
+    service:
+      name: jenkins
+      state: restarted
+    when: plugin_install.changed

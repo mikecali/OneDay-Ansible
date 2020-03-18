@@ -5,11 +5,25 @@ Vagrant.configure("2") do |config|
 # Define VMs with static private IP addresses, vcpu, memory and vagrant-box.
   boxes = [
     {
-      :name => "lb1.demo.com",
+      :name => "jenkins.demo.com",
       :box => "centos/7",
       :ram => 1024,
       :vcpu => 1,
       :ip => "192.168.29.254"
+    },
+    {
+      :name => "win1.demo.com",
+      :box => "vdelarosa/windows-10",
+      :ram => 1024,
+      :vcpu => 1,
+      :ip => "192.168.29.253"
+    },
+    {
+      :name => "win2.demo.com",
+      :box => "vdelarosa/windows-10",
+      :ram => 1024,
+      :vcpu => 1,
+      :ip => "192.168.29.252"
     },
     {
       :name => "web1.demo.com",
